@@ -218,3 +218,6 @@ testing required for forked pull requests will be determined as part of the revi
 - [InfluxDB Tips and Tutorials](https://www.influxdata.com/blog/category/tech/influxdb/)
 - [InfluxDB Essentials Course](https://university.influxdata.com/courses/influxdb-essentials-tutorial/)
 - [Exploring InfluxDB Cloud Course](https://university.influxdata.com/courses/exploring-influxdb-cloud-tutorial/)"# MODULO-DE-MONITOREO-DE-CALIDAD-DEL-AIRE-P.I-6TO-SEMESTRE" 
+#   M O D U L O - D E - M O N I T O R E O - D E - C A L I D A D - D E L - A I R E - P . I - 6 T O - S E M E S T R E  
+ #   M O D U L O - D E - M O N I T O R E O - D E - C A L I D A D - D E L - A I R E - P . I - 6 T O - S E M E S T R E  
+ 
