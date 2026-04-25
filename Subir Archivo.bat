@@ -6,7 +6,6 @@ cls
 :: Activar colores ANSI
 for /F "delims=" %%e in ('echo prompt $E^| cmd') do set "ESC=%%e"
 
-:: ===== ENCABEZADO =====
 echo %ESC%[97m=========================================
 echo %ESC%[91m        SUBIR CAMBIOS AL REPOSITORIO
 echo %ESC%[97m=========================================
@@ -17,7 +16,6 @@ echo %ESC%[94m   - David Ortega Ruiz
 echo %ESC%[95m   - Juan Fernando Urriago Hernandez
 echo %ESC%[0m
 
-:: ===== PEDIR COMENTARIO =====
 set /p COMENTARIO=Escribe tu comentario para el commit: 
 
 if "%COMENTARIO%"=="" (
@@ -26,7 +24,6 @@ if "%COMENTARIO%"=="" (
     exit /b
 )
 
-:: ===== PROCESO GIT =====
 echo.
 echo %ESC%[93mAgregando archivos...%ESC%[0m
 git add .
