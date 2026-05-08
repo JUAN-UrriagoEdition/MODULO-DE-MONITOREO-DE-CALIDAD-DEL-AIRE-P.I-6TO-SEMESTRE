@@ -19,6 +19,7 @@ Este repositorio documenta el **Módulo de Gases Electroquímicos** de la Estaci
 El módulo mide en tiempo real las concentraciones de **monóxido de carbono (CO)**, **dióxido de nitrógeno (NO₂)**, **CO₂ equivalente** y **compuestos orgánicos volátiles (COV)** tanto en entornos interiores como exteriores, publicando los datos a un dashboard web mediante WiFi.
 
 > 📄 **[Descargar Informe Técnico Completo (WORD)](./ESTACION_AQ_ACTUALIZADO.docx)**
+> 📄 **[Descargar Repositorio (.bat)](./Descargar_Repo_Monitor_de_Gases.bat)**
 
 ---
 
