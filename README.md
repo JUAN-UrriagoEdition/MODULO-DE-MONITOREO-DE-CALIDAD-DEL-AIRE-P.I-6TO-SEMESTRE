@@ -1,223 +1,162 @@
-# InfluxDB
-<div align="center">
-  <img  src="assets/influxdb-logo.png" width="600" alt="InfluxDB Logo">
-</div>
+# 🌬️ Estación Modular de Calidad del Aire (AQ)
+### Módulo de Gases Electroquímicos — Ingeniería Electrónica, UCEVA 2026
 
-<p align="center">
-  <a href="https://circleci.com/gh/influxdata/influxdb">
-  <img alt="CircleCI" src="https://circleci.com/gh/influxdata/influxdb.svg?style=svg" />
-  </a>
-  
-  <a href="https://www.influxdata.com/slack">
-  <img alt="Slack Status" src="https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social" />
-  </a>
-  
-  <a href="https://docs.influxdata.com/influxdb/v2.4/install/?t=Docker">
-  <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/_/influxdb" />
-  </a>
-  
-  <a href="https://github.com/influxdata/influxdb/blob/master/LICENSE">
-  <img alt="Docker Pulls" src="https://img.shields.io/github/license/influxdata/influxdb" />
-  </a>
-</p>
-<h3 align="center">
-    <b><a href="https://www.influxdata.com/">Website</a></b>
-    •
-    <a href="https://docs.influxdata.com/">Documentation</a>
-    •
-    <a href="https://university.influxdata.com/">InfluxDB University</a>
-    •
-    <a href="https://www.influxdata.com/blog/">Blog</a>
-</h3>
+<div align="center">
+
+![Estado](https://img.shields.io/badge/estado-prototipo%20funcional-brightgreen)
+![Plataforma](https://img.shields.io/badge/plataforma-ESP32--S3--WROOM--1U-blue)
+![Licencia](https://img.shields.io/badge/licencia-académica-orange)
+![Semestre](https://img.shields.io/badge/semestre-6to-lightgrey)
+
+</div>
 
 ---
 
-InfluxDB is an open source time series platform. This includes APIs for storing and querying data, processing it in the background for ETL or monitoring and alerting purposes, user dashboards, and visualizing and exploring the data and more. The master branch on this repo now represents the latest InfluxDB, which now includes functionality for Kapacitor (background processing) and Chronograf (the UI) all in a single binary.
+## 📋 Descripción General
 
-The list of InfluxDB Client Libraries that are compatible with the latest version can be found in [our documentation](https://docs.influxdata.com/influxdb/latest/tools/client-libraries/).
+Este repositorio documenta el **Módulo de Gases Electroquímicos** de la Estación Modular de Calidad del Aire (AQ), desarrollado como proyecto integrador de 6to semestre en la **Facultad de Ingeniería Electrónica de la Unidad Central del Valle del Cauca (UCEVA)**.
 
-If you are looking for the 1.x line of releases, there are branches for each minor version as well as a `master-1.x` branch that will contain the code for the next 1.x release. The master-1.x [working branch is here](https://github.com/influxdata/influxdb/tree/master-1.x). The [InfluxDB 1.x Go Client can be found here](https://github.com/influxdata/influxdb1-client).
+El módulo mide en tiempo real las concentraciones de **monóxido de carbono (CO)**, **dióxido de nitrógeno (NO₂)**, **CO₂ equivalente** y **compuestos orgánicos volátiles (COV)** tanto en entornos interiores como exteriores, publicando los datos a un dashboard web mediante WiFi.
 
-| Try **InfluxDB Cloud** for free and get started fast with no local setup required. Click [**here**](https://cloud2.influxdata.com/signup) to start building your application on InfluxDB Cloud. |
-|:------|
+> 📄 **[Descargar Informe Técnico Completo (PDF)](./ESTACIÓN_MODULAR_DE_CALIDAD_DEL_AIRE.pdf)**
 
-## Install
+---
 
-We have nightly and versioned Docker images, Debian packages, RPM packages, and tarballs of InfluxDB available at the [InfluxData downloads page](https://portal.influxdata.com/downloads/). We also provide the `influx` command line interface (CLI) client as a separate binary available at the same location.
+## 🎯 Motivación
 
-If you are interested in building from source, see the [building from source](CONTRIBUTING.md#building-from-source) guide for contributors.
+La contaminación del aire representa uno de los mayores problemas de salud pública a nivel mundial. En el municipio de **Tuluá y el Valle del Cauca**, la ausencia de redes densas de monitoreo continuo limita la detección oportuna de episodios críticos de contaminación, especialmente en corredores viales de alto tráfico y en espacios interiores de instituciones educativas.
 
-<a href="https://university.influxdata.com/catalog/">
-  <img src="assets/influxdbU-banner.png" width="600"/>
-</a>
+Los sistemas convencionales de monitoreo tienen costos de entre **USD 50.000 y 200.000** por estación. Este módulo propone una alternativa de **bajo costo** basada en sensores MEMS, con criterios rigurosos de instrumentación, calibración y validación.
 
-## Get Started
+---
 
-For a complete getting started guide, please see our full [online documentation site](https://docs.influxdata.com/influxdb/latest/).
+## ⚙️ Arquitectura del Sistema
 
-To write and query data or use the API in any way, you'll need to first create a user, credentials, organization and bucket.
-Everything in InfluxDB is organized under a concept of an organization. The API is designed to be multi-tenant.
-Buckets represent where you store time series data.
-They're synonymous with what was previously in InfluxDB 1.x a database and retention policy.
-
-The simplest way to get set up is to point your browser to [http://localhost:8086](http://localhost:8086) and go through the prompts.
-
-You can also get set up from the CLI using the command `influx setup`:
-
-
-```bash
-$ bin/$(uname -s | tr '[:upper:]' '[:lower:]')/influx setup
-Welcome to InfluxDB 2.0!
-Please type your primary username: marty
-
-Please type your password:
-
-Please type your password again:
-
-Please type your primary organization name.: InfluxData
-
-Please type your primary bucket name.: telegraf
-
-Please type your retention period in hours.
-Or press ENTER for infinite.: 72
-
-
-You have entered:
-  Username:          marty
-  Organization:      InfluxData
-  Bucket:            telegraf
-  Retention Period:  72 hrs
-Confirm? (y/n): y
-
-UserID                  Username        Organization    Bucket
-033a3f2c5ccaa000        marty           InfluxData      Telegraf
-Your token has been stored in /Users/marty/.influxdbv2/credentials
-```
-
-You can run this command non-interactively using the `-f, --force` flag if you are automating the setup.
-Some added flags can help:
-```bash
-$ bin/$(uname -s | tr '[:upper:]' '[:lower:]')/influx setup \
---username marty \
---password F1uxKapacit0r85 \
---org InfluxData \
---bucket telegraf \
---retention 168 \
---token where-were-going-we-dont-need-roads \
---force
-```
-
-Once setup is complete, a configuration profile is created to allow you to interact with your local InfluxDB without passing in credentials each time. You can list and manage those profiles using the `influx config` command.
-```bash
-$ bin/$(uname -s | tr '[:upper:]' '[:lower:]')/influx config
-Active	Name	URL			            Org
-*	    default	http://localhost:8086	InfluxData
-```
-
-## Write Data
-Write to measurement `m`, with tag `v=2`, in bucket `telegraf`, which belongs to organization `InfluxData`:
-
-```bash
-$ bin/$(uname -s | tr '[:upper:]' '[:lower:]')/influx write --bucket telegraf --precision s "m v=2 $(date +%s)"
-```
-
-Since you have a default profile set up, you can omit the Organization and Token from the command.
-
-Write the same point using `curl`:
-
-```bash
-curl --header "Authorization: Token $(bin/$(uname -s | tr '[:upper:]' '[:lower:]')/influx auth list --json | jq -r '.[0].token')" \
---data-raw "m v=2 $(date +%s)" \
-"http://localhost:8086/api/v2/write?org=InfluxData&bucket=telegraf&precision=s"
-```
-
-Read that back with a simple Flux query:
-
-```bash
-$ bin/$(uname -s | tr '[:upper:]' '[:lower:]')/influx query 'from(bucket:"telegraf") |> range(start:-1h)'
-Result: _result
-Table: keys: [_start, _stop, _field, _measurement]
-                   _start:time                      _stop:time           _field:string     _measurement:string                      _time:time                  _value:float
-------------------------------  ------------------------------  ----------------------  ----------------------  ------------------------------  ----------------------------
-2019-12-30T22:19:39.043918000Z  2019-12-30T23:19:39.043918000Z                       v                       m  2019-12-30T23:17:02.000000000Z                             2
-```
-
-Use the `-r, --raw` option to return the raw flux response from the query. This is useful for moving data from one instance to another as the `influx write` command can accept the Flux response using the `--format csv` option.
-
-## Script with Flux
-
-Flux (previously named IFQL) is an open source functional data scripting language designed for querying, analyzing, and acting on data. Flux supports multiple data source types, including:
-
-- Time series databases (such as InfluxDB)
-- Relational SQL databases (such as MySQL and PostgreSQL)
-- CSV
-
-The source for Flux is [available on GitHub](https://github.com/influxdata/flux).
-To learn more about Flux, see the latest [InfluxData Flux documentation](https://docs.influxdata.com/flux/) and [CTO Paul Dix's presentation](https://speakerdeck.com/pauldix/flux-number-fluxlang-a-new-time-series-data-scripting-language).
-
-## Contribute to the Project
-
-InfluxDB is an [MIT licensed](LICENSE) open source project and we love our community. The fastest way to get something fixed is to open a PR. Check out our [contributing](CONTRIBUTING.md) guide if you're interested in helping out. Also, join us on our [Community Slack Workspace](https://influxdata.com/slack) if you have questions or comments for our engineering teams.
-
-## CI and Static Analysis
-
-### CI
-
-All pull requests will run through CI, which is currently hosted by Circle.
-Community contributors should be able to see the outcome of this process by looking at the checks on their PR.
-Please fix any issues to ensure a prompt review from members of the team.
-
-The InfluxDB project is used internally in a number of proprietary InfluxData products, and as such, PRs and changes need to be tested internally.
-This can take some time, and is not really visible to community contributors.
-
-### Static Analysis
-
-This project uses the following static analysis tools.
-Failure during the running of any of these tools results in a failed build.
-Generally, code must be adjusted to satisfy these tools, though there are exceptions.
-
-- [go vet](https://golang.org/cmd/vet/) checks for Go code that should be considered incorrect.
-- [go fmt](https://golang.org/cmd/gofmt/) checks that Go code is correctly formatted.
-- [go mod tidy](https://tip.golang.org/cmd/go/#hdr-Add_missing_and_remove_unused_modules) ensures that the source code and go.mod agree.
-- [staticcheck](https://staticcheck.io/docs/) checks for things like: unused code, code that can be simplified, code that is incorrect and code that will have performance issues.
-
-### staticcheck
-
-If your PR fails `staticcheck` it is easy to dig into why it failed, and also to fix the problem.
-First, take a look at the error message in Circle under the `staticcheck` build section, e.g.,
+La cadena de instrumentación sigue el flujo completo:
 
 ```
-tsdb/tsm1/encoding.gen.go:1445:24: func BooleanValues.assertOrdered is unused (U1000)
-tsdb/tsm1/encoding.go:172:7: receiver name should not be an underscore, omit the name if it is unused (ST1006)
+Sensor MEMS → Filtro RC (fc ≈ 10.6 Hz) → Buffer LMV321 → ADC 12-bit ESP32-S3 → Procesamiento → WiFi → Hub → Dashboard
 ```
 
-Next, go and take a [look here](http://next.staticcheck.io/docs/checks) for some clarification on the error code that you have received, e.g., `U1000`.
-The docs will tell you what's wrong, and often what you need to do to fix the issue.
+El sensor digital **CCS811** se conecta directamente por bus **I²C**, sin requerir acondicionamiento analógico externo.
 
-#### Generated Code
+---
 
-Sometimes generated code will contain unused code or occasionally that will fail a different check.
-`staticcheck` allows for [entire files](http://next.staticcheck.io/docs/#ignoring-problems) to be ignored, though it's not ideal.
-A linter directive, in the form of a comment, must be placed within the generated file.
-This is problematic because it will be erased if the file is re-generated.
-Until a better solution comes about, below is the list of generated files that need an ignores comment.
-If you re-generate a file and find that `staticcheck` has failed, please see this list below for what you need to put back:
+## 🔬 Sensores y Componentes Principales
 
-|          File          |                             Comment                              |
-| :--------------------: | :--------------------------------------------------------------: |
-| query/promql/promql.go | //lint:file-ignore SA6001 Ignore all unused code, it's generated |
+| Componente | Función | Interfaz |
+|---|---|---|
+| **SEN0564** (DFRobot) | CO — 5 a 5000 ppm | Analógica (0.4–2.0 V) |
+| **SEN0574** (DFRobot) | NO₂ — 0.1 a 10 ppm | Analógica |
+| **CCS811** (ScioSense) | CO₂eq + TVOC | Digital I²C |
+| **ESP32-S3-WROOM-1U** | MCU, ADC 12-bit, WiFi | — |
+| **LMV321** | Buffer seguidor de voltaje | — |
+| **REF2033A** | Referencia de voltaje dual 3.3/1.65 V | — |
+| **LP38692MP-3.3** | Regulador LDO 3.3 V | — |
+| **LED RGB** | Indicación visual de calidad del aire | PWM |
 
-#### End-to-End Tests
+---
 
-CI also runs end-to-end tests. These test the integration between the `influxd` server the UI.
-Since the UI is used by interal repositories as well as the `influxdb` repository, the
-end-to-end tests cannot be run on forked pull requests or run locally. The extent of end-to-end
-testing required for forked pull requests will be determined as part of the review process.
+## 📐 Diseño de Acondicionamiento Analógico
 
-## Additional Resources
-- [InfluxDB Tips and Tutorials](https://www.influxdata.com/blog/category/tech/influxdb/)
-- [InfluxDB Essentials Course](https://university.influxdata.com/courses/influxdb-essentials-tutorial/)
-- [Exploring InfluxDB Cloud Course](https://university.influxdata.com/courses/exploring-influxdb-cloud-tutorial/)"# MODULO-DE-MONITOREO-DE-CALIDAD-DEL-AIRE-P.I-6TO-SEMESTRE" 
-#   M O D U L O - D E - M O N I T O R E O - D E - C A L I D A D - D E L - A I R E - P . I - 6 T O - S E M E S T R E  
- #   M O D U L O - D E - M O N I T O R E O - D E - C A L I D A D - D E L - A I R E - P . I - 6 T O - S E M E S T R E  
- 
+- **Filtro RC pasabajas** de primer orden: `R = 10 kΩ`, `C = 1.5 µF` → `fc ≈ 10.6 Hz`
+- **Buffer LMV321** en configuración seguidor unitario (ganancia 1) para desacoplar la impedancia del ADC
+- **Referencia REF2033A** con baja deriva térmica para estabilidad en la conversión ADC
+- **ADC SAR de 12 bits** del ESP32-S3: resolución teórica de `≈ 0.806 mV/bit`
+- **Sobremuestreo y promediado** (N = 32–64 muestras) para mejorar la resolución efectiva (ENOB ≥ 11 bits)
+
+---
+
+## 💡 Indicación Visual
+
+El LED RGB indica el nivel de calidad del aire mediante colores controlados por PWM (5 kHz, 8 bits):
+
+| Color | Estado | Umbral |
+|---|---|---|
+| 🟢 Verde | Limpio | < 40% de escala |
+| 🟡 Ámbar | Advertencia | 40–70% de escala |
+| 🔴 Rojo | Crítico | > 70% de escala |
+
+---
+
+## 📡 Formato de Mensajes JSON (Contrato de Datos)
+
+El módulo publica al hub central mensajes con la siguiente estructura mínima:
+
+```json
+{
+  "module": "gas_module_01",
+  "environment": "indoor",
+  "location": "UCEVA - Aula 201",
+  "ts": 1745000000,
+  "metrics": {
+    "co_ppm": 1.2,
+    "no2_ppm": 0.05,
+    "eco2_ppm": 520,
+    "tvoc_ppb": 35,
+    "quality": "ok",
+    "temp_comp": 24.5,
+    "rh_comp": 58.0
+  }
+}
+```
+
+---
+
+## 🔄 Estados del Firmware
+
+| Estado | Descripción |
+|---|---|
+| `warmup` | Calentamiento inicial del sensor (< 2 min) |
+| `ok` | Operación normal |
+| `fault` | Sensor desconectado o señal fuera de rango |
+| `saturation` | Señal en los extremos del rango ADC |
+| `suspect` | Alta variabilidad o lecturas inconsistentes |
+
+---
+
+## 📦 Lista de Materiales (BOM)
+
+Los componentes fueron adquiridos mediante el pedido **Mouser N.° 279751168** (enviado el 21 de abril de 2026). El costo total del pedido fue de aproximadamente **USD 48** más aranceles de importación colombianos.
+
+Los sensores SEN0564, SEN0574 y el LED RGB se adquirieron de forma local/separada.
+
+---
+
+## 🧪 Pruebas y Criterios de Aceptación
+
+| ID | Prueba | Criterio |
+|---|---|---|
+| CP01 | Rango analógico SEN0564 (CO) | V_out varía de forma monotónica en 0.4–2.0 V |
+| CP04 | Respuesta del filtro RC | Atenuación a fc = −3 dB ± 1 dB; a 10·fc ≥ −20 dB |
+| CP06 | Publicación de mensajes JSON | ≥ 5 mensajes válidos en 5 minutos |
+| CP07 | Estado warmup al encender | `quality = warmup` durante ≥ 60 s |
+| CP08 | Estado fault ante desconexión | `quality = fault` en ≤ 3 ciclos de publicación |
+
+---
+
+## 👥 Equipo
+
+| Nombre | Código |
+|---|---|
+| David Ortega Ruiz | 240232001 |
+| Juan Fernando Urriago Hernández | 240232002 |
+| Sergio Peñaranda Agudelo | 240232004 |
+| Miguel Ángel Parra Gutiérrez | 240232013 |
+
+**Asignatura integradora:** Instrumentación I  
+**Docente:** Álvaro Hernando Salazar Victoria  
+**Facultad de Ingeniería Electrónica — UCEVA, 2026**
+
+---
+
+## 📚 Referencias Clave
+
+- Mead et al. (2013) — *Atmospheric Environment* — Redes urbanas con sensores electroquímicos
+- Kumar et al. (2015) — *Environment International* — Sensores de bajo costo para calidad del aire
+- Spinelle et al. (2015) — *Sensors and Actuators B* — Calibración en campo con MLR
+- Zimmerman et al. (2018) — *Atmospheric Measurement Techniques* — Calibración con Random Forest
+
+---
+
+> 📄 **[Descargar Informe Técnico Completo (PDF)](./ESTACIÓN_MODULAR_DE_CALIDAD_DEL_AIRE.pdf)**
