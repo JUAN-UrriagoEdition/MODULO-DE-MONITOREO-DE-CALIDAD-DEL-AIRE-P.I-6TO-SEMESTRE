@@ -4528,10 +4528,6 @@
 		(uuid "595a6104-fe19-49c7-87c1-df56cd9af897")
 	)
 	(no_connect
-		(at 111.76 163.83)
-		(uuid "60b0a651-ed1b-4e53-8cc2-c8d3d24fd23b")
-	)
-	(no_connect
 		(at 111.76 171.45)
 		(uuid "63907da8-c68e-4a3c-8838-fb1ab795f8bb")
 	)
@@ -4546,10 +4542,6 @@
 	(no_connect
 		(at 111.76 158.75)
 		(uuid "75bda705-a171-49e3-aa7d-382d0d6dbcfc")
-	)
-	(no_connect
-		(at 111.76 161.29)
-		(uuid "831ec2a4-0372-4cd7-81ee-726b88343c8b")
 	)
 	(no_connect
 		(at 147.32 138.43)
@@ -4997,16 +4989,6 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 151.13) (xy 114.3 151.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "313f2052-a530-477f-9750-56b45da5648b")
-	)
-	(wire
-		(pts
 			(xy 144.78 176.53) (xy 147.32 176.53)
 		)
 		(stroke
@@ -5174,16 +5156,6 @@
 			(type default)
 		)
 		(uuid "4855128a-bc15-4098-a95c-0432a5c1d781")
-	)
-	(wire
-		(pts
-			(xy 111.76 161.29) (xy 114.3 161.29)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4873ce80-49f9-41f2-9a8e-c42b68d5ce77")
 	)
 	(wire
 		(pts
@@ -5424,16 +5396,6 @@
 			(type default)
 		)
 		(uuid "70a9d049-c997-45de-b2bf-d1a647c8d662")
-	)
-	(wire
-		(pts
-			(xy 111.76 163.83) (xy 114.3 163.83)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "70b93a0c-ac98-49c9-951e-f01ce16b3c8f")
 	)
 	(wire
 		(pts
@@ -6447,6 +6409,16 @@
 	)
 	(wire
 		(pts
+			(xy 111.76 161.29) (xy 114.3 161.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "de760370-8b2d-46c1-acde-7a414443aaeb")
+	)
+	(wire
+		(pts
 			(xy 318.77 135.89) (xy 318.77 138.43)
 		)
 		(stroke
@@ -6464,6 +6436,16 @@
 			(type default)
 		)
 		(uuid "dfbf072f-50a1-4046-be17-4a1ecb5af849")
+	)
+	(wire
+		(pts
+			(xy 111.76 163.83) (xy 114.3 163.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e0f9f838-018e-4dec-ab96-0d54b7e9dfe9")
 	)
 	(wire
 		(pts
@@ -6627,16 +6609,6 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 148.59) (xy 114.3 148.59)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "efbdc682-d634-4303-9f60-ddd8e5ac47f5")
-	)
-	(wire
-		(pts
 			(xy 203.2 152.4) (xy 203.2 160.02)
 		)
 		(stroke
@@ -6766,7 +6738,7 @@
 		(uuid "15e96c69-e315-45dd-8716-56171a911298")
 	)
 	(label "ADC1_CH1"
-		(at 111.76 148.59 180)
+		(at 111.76 163.83 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6786,7 +6758,7 @@
 		(uuid "3904ce7b-0b91-4130-9dc0-9886bff53025")
 	)
 	(label "ADC1_CH0"
-		(at 111.76 151.13 180)
+		(at 111.76 161.29 180)
 		(effects
 			(font
 				(size 1.27 1.27)
