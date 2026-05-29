@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Interfaz-gases" default="default" basedir=".">
+    <description>Monitor de Gases P.I6Def — ESP32-S3 | Ant + jSerialComm</description>
+    <import file="nbproject/build-impl.xml"/>
+
+    <!--
+    ══════════════════════════════════════════════════════════════════
+      DESCARGA AUTOMÁTICA DE jSerialComm
+      Antes de compilar, Ant revisa si lib/jSerialComm-2.11.0.jar
+      existe. Si no, lo descarga desde Maven Central.
+
+      Si el entorno NO tiene acceso a internet, descarga manualmente:
+        https://github.com/Fazecast/jSerialComm/releases
+      y copia el JAR a:
+        lib/jSerialComm-2.11.0.jar
+    ══════════════════════════════════════════════════════════════════
+    -->
+
+    <property name="jserialcomm.version" value="2.11.0"/>
+    <property name="jserialcomm.jar"     value="lib/jSerialComm-${jserialcomm.version}.jar"/>
+    <property name="jserialcomm.url"
+              value="https://repo1.maven.org/maven2/com/fazecast/jSerialComm/${jserialcomm.version}/jSerialComm-${jserialcomm.version}.jar"/>
+
+    <!-- Crea la carpeta lib si no existe -->
+    <target name="-pre-init">
+        <mkdir dir="lib"/>
+    </target>
+
+    <!-- Descarga jSerialComm solo si no está presente -->
+    <target name="-check-jserialcomm">
+        <available file="${jserialcomm.jar}" property="jserialcomm.present"/>
+    </target>
+
+    <target name="-download-jserialcomm"
+            depends="-check-jserialcomm"
+            unless="jserialcomm.present">
+        <echo message="[jSerialComm] Descargando ${jserialcomm.url} ..."/>
+        <get src="${jserialcomm.url}"
+             dest="${jserialcomm.jar}"
+             usetimestamp="true"
+             ignoreerrors="false"/>
+        <echo message="[jSerialComm] JAR guardado en ${jserialcomm.jar}"/>
+    </target>
+
+    <!-- Enganchar la descarga antes de compilar -->
+    <target name="-pre-compile" depends="-download-jserialcomm"/>
+
+    <!--
+    ══════════════════════════════════════════════════════════════════
+      JAR ejecutable: incluye jSerialComm dentro del fat-jar
+      para que funcione con doble clic sin instalar nada.
+    ══════════════════════════════════════════════════════════════════
+    -->
+    <target name="-post-jar" depends="-download-jserialcomm">
+        <echo message="[fat-jar] Empaquetando jSerialComm dentro del JAR..."/>
+        <jar destfile="${dist.jar}" update="true">
+            <zipfileset src="${jserialcomm.jar}" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA"/>
+        </jar>
+        <echo message="[fat-jar] Listo: ${dist.jar}"/>
+    </target>
+
+</project>
