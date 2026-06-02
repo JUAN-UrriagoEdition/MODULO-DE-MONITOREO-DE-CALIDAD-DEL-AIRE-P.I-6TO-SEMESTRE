@@ -1,0 +1,13 @@
+(version 1)
+(rule Minimum_clearance_1
+	(constraint clearance (min 0.1016mm))
+)
+(rule Courtyard_clearance_1
+	(constraint courtyard_clearance (min 0.0254mm))
+)
+(rule Minimum_drill_size_1
+	(constraint hole_size (min 0.1778mm))
+)
+(rule Minimum_thermal_relief_spoke_count_1
+	(constraint min_resolved_spokes 1)
+)
