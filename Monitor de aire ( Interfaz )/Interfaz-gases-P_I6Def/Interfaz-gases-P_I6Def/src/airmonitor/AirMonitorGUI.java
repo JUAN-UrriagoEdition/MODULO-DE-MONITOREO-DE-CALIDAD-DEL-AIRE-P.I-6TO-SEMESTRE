@@ -28,13 +28,13 @@ public class AirMonitorGUI extends JFrame {
     // CO2 : 400–5000 ppm ASHRAE 1000, NIOSH 5000 TWA
     // VOC : 0–1000 ppb  IAQ <220 buena, <660 moderada
     static final double CO_MAX  = 1200.0;
-    static final double NO2_MAX = 10.0;
+    static final double NO2_MAX = 20.0;
     static final double CO2_MAX = 5000.0;
     static final double VOC_MAX = 1000.0;
  
     // Umbrales como fracción [precaución, peligro]
     static final double[] CO_THRESH  = {35.0/1200,  200.0/1200};  // 35 / 200 ppm
-    static final double[] NO2_THRESH = {0.5/10.0,   1.0/10.0};    // 0.5 / 1.0 ppm
+    static final double[] NO2_THRESH = {0.5/20.0,   1.0/20.0};    // 0.5 / 1.0 ppm
     static final double[] CO2_THRESH = {1000.0/5000, 2000.0/5000};// 1000/2000 ppm
     static final double[] VOC_THRESH = {220.0/1000,  660.0/1000}; // 220 / 660 ppb
  
@@ -50,15 +50,15 @@ public class AirMonitorGUI extends JFrame {
     private final List<Double> histNO2 = new ArrayList<>();
     private final List<Double> histCO2 = new ArrayList<>();
     private final List<Double> histVOC = new ArrayList<>();
-    private static final int HIST_MAX = 60;
+    private static final int HIST_MAX = 120;
  
     // ── Componentes UI ────────────────────────────────────────────────────
     private GaugePanel gaugeCO, gaugeNO2, gaugeCO2, gaugeVOC;
     private GraphPanel graphCO, graphNO2, graphCO2, graphVOC;
     private JLabel lblStatus, lblTimestamp;
-    private JComboBox<String> cmbPort;
+    private javax.swing.JTextField txtIp;
     private JButton btnConnect;
-    private SerialReader serialReader;
+    private HttpReader httpReader;
  
     // ── Animación lerp ────────────────────────────────────────────────────
     private double tgtCO=0, tgtNO2=0, tgtCO2=415, tgtVOC=0;
@@ -158,29 +158,30 @@ public class AirMonitorGUI extends JFrame {
         f.setBackground(BG_CARD);
         f.setBorder(BorderFactory.createMatteBorder(1,0,0,0,
                 ACCENT_CYAN.darker().darker()));
- 
-        JLabel lPort = makeLabel("Puerto Serial:", TEXT_DIM, 12);
-        cmbPort = new JComboBox<>(SerialReader.getAvailablePorts());
-        styleCombo(cmbPort);
- 
-        JButton btnRefresh = makeButton("↻", ACCENT_CYAN);
-        btnRefresh.setToolTipText("Buscar puertos");
-        btnRefresh.addActionListener(e -> {
-            cmbPort.removeAllItems();
-            for (String p : SerialReader.getAvailablePorts()) cmbPort.addItem(p);
-        });
- 
+
+        JLabel lIp = makeLabel("IP del ESP32:", TEXT_DIM, 12);
+
+        txtIp = new javax.swing.JTextField("192.168.1.100", 14);
+        txtIp.setBackground(BG_CARD2);
+        txtIp.setForeground(TEXT_MAIN);
+        txtIp.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        txtIp.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(ACCENT_CYAN.darker().darker(), 1),
+            BorderFactory.createEmptyBorder(4, 6, 4, 6)));
+        txtIp.setCaretColor(ACCENT_CYAN);
+        txtIp.addActionListener(this::onConnectToggle);
+
         btnConnect = makeButton("CONECTAR", ACCENT_GREEN);
         btnConnect.addActionListener(this::onConnectToggle);
- 
+
         JButton btnDemo = makeButton("DEMO", ACCENT_AMBER);
         btnDemo.addActionListener(this::onDemoToggle);
- 
+
         JLabel lProto = makeLabel(
-            "Baud: 115200  |  Protocolo: CO:<ppm>,NO2:<ppm>,CO2:<ppm>,VOC:<ppb>  |  Líneas '#' ignoradas",
+            "Puerto: 80  |  Endpoint: /datos  |  Polling: 500ms  |  JSON",
             TEXT_DIM, 11);
- 
-        f.add(lPort); f.add(cmbPort); f.add(btnRefresh);
+
+        f.add(lIp); f.add(txtIp);
         f.add(Box.createHorizontalStrut(8));
         f.add(btnConnect); f.add(btnDemo);
         f.add(Box.createHorizontalStrut(16));
@@ -222,51 +223,34 @@ public class AirMonitorGUI extends JFrame {
         return b;
     }
  
-    private void styleCombo(JComboBox<String> c) {
-        // Renderer personalizado para forzar colores en Windows LAF
-        c.setRenderer(new javax.swing.DefaultListCellRenderer() {
-            @Override
-            public java.awt.Component getListCellRendererComponent(
-                    JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                lbl.setBackground(isSelected ? ACCENT_CYAN.darker().darker() : BG_CARD2);
-                lbl.setForeground(TEXT_MAIN);
-                lbl.setFont(new Font("Monospaced", Font.PLAIN, 12));
-                lbl.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
-                return lbl;
-            }
-        });
-        c.setBackground(BG_CARD2); c.setForeground(TEXT_MAIN);
-        c.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        c.setPreferredSize(new Dimension(150, 30));
-        c.setBorder(BorderFactory.createLineBorder(ACCENT_CYAN.darker().darker(), 1));
-    }
+
  
-    // ─── Serial ───────────────────────────────────────────────────────────
+    // ─── HTTP ────────────────────────────────────────────────────────────
     private void onConnectToggle(ActionEvent e) {
         if (!connected) {
-            String port = (String) cmbPort.getSelectedItem();
-            if (port == null || port.isBlank()) {
+            String ip = txtIp.getText().trim();
+            if (ip.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                        "Selecciona un puerto serial.", "Sin puerto",
+                        "Ingresa la IP del ESP32.", "Sin IP",
                         JOptionPane.WARNING_MESSAGE); return;
             }
-            serialReader = new SerialReader(port, 115200, this::onSerialData);
-            if (serialReader.open()) {
-                connected = true;
-                lblStatus.setText("● CONECTADO  " + port);
-                lblStatus.setForeground(ACCENT_GREEN);
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "No se pudo abrir " + port + ".\n"
-                        + "Verifica ESP32-S3 conectada y jSerialComm en classpath.",
-                        "Error Serial", JOptionPane.ERROR_MESSAGE);
-            }
+            httpReader = new HttpReader(ip, this::onSerialData, err ->
+                SwingUtilities.invokeLater(() -> {
+                    lblStatus.setText("⚠ Sin conexión — " + err);
+                    lblStatus.setForeground(ACCENT_AMBER);
+                })
+            );
+            httpReader.start();
+            connected = true;
+            lblStatus.setText("● CONECTADO  " + ip);
+            lblStatus.setForeground(ACCENT_GREEN);
+            btnConnect.setText("DESCONECTAR");
         } else {
-            if (serialReader != null) serialReader.close();
+            if (httpReader != null) httpReader.stop();
             connected = false;
             lblStatus.setText("● DESCONECTADO");
             lblStatus.setForeground(ACCENT_RED);
+            btnConnect.setText("CONECTAR");
         }
     }
  
@@ -277,7 +261,7 @@ public class AirMonitorGUI extends JFrame {
     private void onDemoToggle(ActionEvent e) {
         if (!demoRunning) {
             demoRunning = true;
-            demoTimer = new Timer(950, ev -> {
+            demoTimer = new Timer(200, ev -> {
                 // Simula datos realistas con drift lento
                 double co  = Math.max(0, Math.min(CO_MAX,
                         valCO  + (Math.random()-0.47)*8));
@@ -349,7 +333,7 @@ public class AirMonitorGUI extends JFrame {
  
     private void startAnimationLoop() {
         animTimer = new Timer(16, e -> {
-            double spd = 0.07;
+            double spd = 0.25;
             curCO  += (tgtCO  - curCO)  * spd;
             curNO2 += (tgtNO2 - curNO2) * spd;
             curCO2 += (tgtCO2 - curCO2) * spd;
