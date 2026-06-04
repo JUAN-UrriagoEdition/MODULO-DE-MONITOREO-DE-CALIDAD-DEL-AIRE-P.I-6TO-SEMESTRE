@@ -73,7 +73,7 @@ unsigned long tiempoPeligro = 0;      // millis desde que entró en PELIGRO
 WebServer server(80);
 
 // ─── Objetos globales ─────────────────────────────────────
-CCS811 ccs(0x5B);
+CCS811 ccs(0x5A);
 bool ccsOK = false;
 unsigned long ultimaLectura = 0;
 #define INTERVALO_MS 1000
