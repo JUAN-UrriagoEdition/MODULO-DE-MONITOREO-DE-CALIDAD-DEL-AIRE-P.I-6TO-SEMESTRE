@@ -50,8 +50,16 @@
 // ─── Calibración sensores ──────────────────────────────────
 #define CO_REF_PPM  150.0f
 #define V_CO_REF    1.50f
-#define V0_NO2      3.10f
-#define FACTOR_NO2  0.20f
+
+// GM-102B (NO2) — sensor INVERSO: Vout BAJA cuando sube NO2
+// ─── CÓMO CALIBRAR ────────────────────────────────────────
+// 1. Flashea este código y abre el Monitor Serial
+// 2. En aire limpio anota el valor "Vno2=X.XXX"
+// 3. Ese valor es tu V0_NO2 real → reemplázalo abajo
+// 4. FACTOR_NO2 = V0_NO2 / 10.0  (para cubrir 0-10 ppm)
+// ──────────────────────────────────────────────────────────
+#define V0_NO2      3.10f    // ← reemplazar con Vno2 en aire limpio
+#define FACTOR_NO2  0.31f    // ← V0_NO2 / 10.0
 
 // ─── Umbrales ─────────────────────────────────────────────
 #define U_CO_ADV    35.0f
@@ -243,9 +251,11 @@ void loop() {
   if (ahora - ultimaLectura >= INTERVALO_MS) {
     ultimaLectura = ahora;
 
-    // Leer sensores
-    g_co  = vACO(rawAV(analogRead(PIN_CO)));
-    g_no2 = vANO2(rawAV(analogRead(PIN_NO2)));
+    // Leer sensores — guardar voltajes para debug
+    float vCO  = rawAV(analogRead(PIN_CO));
+    float vNO2 = rawAV(analogRead(PIN_NO2));
+    g_co  = vACO(vCO);
+    g_no2 = vANO2(vNO2);
     if (ccsOK && ccs.dataAvailable()) {
       ccs.readAlgorithmResults();
       g_co2 = (float)ccs.getCO2();
@@ -255,8 +265,10 @@ void loop() {
     // Actualizar estado
     actualizarEstado(g_co, g_no2, g_co2, g_voc);
 
-    // Serial para debug
+    // Serial — ppm + voltajes crudos para calibración
     Serial.printf("CO:%.2f,NO2:%.3f,CO2:%.1f,VOC:%.1f,EST:%s\n",
                   g_co, g_no2, g_co2, g_voc, nombreEstado());
+    Serial.printf("# Vco=%.3fV  Vno2=%.3fV  (V0_NO2=%.2f FACTOR=%.3f)\n",
+                  vCO, vNO2, V0_NO2, FACTOR_NO2);
   }
 }
