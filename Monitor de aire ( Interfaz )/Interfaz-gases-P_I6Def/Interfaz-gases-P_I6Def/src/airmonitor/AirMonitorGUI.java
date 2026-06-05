@@ -33,10 +33,10 @@ public class AirMonitorGUI extends JFrame {
     static final double VOC_MAX = 1000.0;
  
     // Umbrales como fracción [precaución, peligro]
-    static final double[] CO_THRESH  = {35.0/1200,  200.0/1200};  // 35 / 200 ppm
-    static final double[] NO2_THRESH = {0.5/20.0,   1.0/20.0};    // 0.5 / 1.0 ppm
-    static final double[] CO2_THRESH = {1000.0/5000, 2000.0/5000};// 1000/2000 ppm
-    static final double[] VOC_THRESH = {220.0/1000,  660.0/1000}; // 220 / 660 ppb
+    static final double[] CO_THRESH  = {35.0/1200,  200.0/1200};
+    static final double[] NO2_THRESH = {0.5/20.0,   1.0/20.0};
+    static final double[] CO2_THRESH = {1000.0/5000, 2000.0/5000};
+    static final double[] VOC_THRESH = {220.0/1000,  660.0/1000};
  
     // ── Valores actuales ─────────────────────────────────────────────────
     private double valCO  = 0.0;
@@ -288,8 +288,6 @@ public class AirMonitorGUI extends JFrame {
     }
  
     // ─── Parser serial ────────────────────────────────────────────────────
-    // Protocolo: CO:<ppm>,NO2:<ppm>,CO2:<ppm>,VOC:<ppb>
-    // Líneas que empiezan con '#' son comentarios — ignorar.
     public void onSerialData(String line) {
         if (line == null || line.isBlank() || line.startsWith("#")) return;
         try {

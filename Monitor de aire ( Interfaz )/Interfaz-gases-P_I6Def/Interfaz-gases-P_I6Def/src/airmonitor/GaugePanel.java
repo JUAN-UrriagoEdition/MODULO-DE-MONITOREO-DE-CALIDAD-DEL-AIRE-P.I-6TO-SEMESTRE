@@ -7,24 +7,23 @@ import java.awt.image.BufferedImage;
 
 import static airmonitor.AirMonitorGUI.*;
 
-/**
- * GaugePanel — Medidor circular tipo arco con animación de colores
- * y niveles de alerta configurables.
+/*
+ * GaugePanel - Medidor circular tipo arco con animación de colores y niveles de alerta configurables.
  */
 public class GaugePanel extends JPanel {
 
     private final String label;
     private final String unit;
     private final double maxVal;
-    private final double[] thresholds; // [seguro, precaución] como fracción 0–1
+    private final double[] thresholds;
     private final Color colorNormal;
     private final Color colorGlow;
 
     private double value = 0.0;
 
     // Precalculados para el arco
-    private static final int ARC_START  = 220;  // grados (desde 3 en punto, sentido anti)
-    private static final int ARC_SWEEP  = -260; // barrido total del arco
+    private static final int ARC_START  = 220;
+    private static final int ARC_SWEEP  = -260;
 
     public GaugePanel(String label, String unit, double maxVal,
                       double[] thresholds, Color colorNormal, Color colorGlow) {
